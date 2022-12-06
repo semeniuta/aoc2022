@@ -26,18 +26,22 @@ def parse_command(command_s):
     return num, src, dst
 
 
-def rearrange(stacks, commands):
+def rearrange(stacks, commands, preserve_order):
     
     for num, src, dst in commands:
         src_stack = stacks[src]
         dst_stack = stacks[dst]
 
-        for _ in range(num):
-            val = src_stack.pop()
-            dst_stack.append(val)
+        if preserve_order:
+            popped = reversed([src_stack.pop() for _ in range(num)])
+            dst_stack += popped
+        else:
+            for _ in range(num):
+                val = src_stack.pop()
+                dst_stack.append(val)
 
 
-def find_tops(fname):
+def find_tops(fname, preserve_order):
 
     with open(fname) as f:
 
@@ -51,14 +55,17 @@ def find_tops(fname):
         commands = [parse_command(line) for line in f]
 
     stacks = create_stacks(levels)
-    rearrange(stacks, commands)
+    rearrange(stacks, commands, preserve_order)
 
     tops = [stacks[k][-1] for k in sorted(stacks.keys())]
     return ''.join(tops)
 
+
 if __name__ == '__main__':
 
-    assert('CMZ' == find_tops('data/test_input.txt'))
+    assert('CMZ' == find_tops('data/test_input.txt', preserve_order=False))
+    assert('MCD' == find_tops('data/test_input.txt', preserve_order=True))
 
-    print('Tops of the stacks:', find_tops('data/input.txt'))
+    print('Tops of the stacks:', find_tops('data/input.txt', preserve_order=False))
+    print('Tops of the stacks (preserving order):', find_tops('data/input.txt', preserve_order=True))
 
