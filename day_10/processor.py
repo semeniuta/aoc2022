@@ -1,3 +1,4 @@
+import numpy as np
 
 
 class Instruction:
@@ -15,7 +16,6 @@ class Instruction:
             self.addx = int(text.split(' ')[-1])
         else:
             raise Exception(f'unreachable: text={text}')
-
 
 
 if __name__ == '__main__':
@@ -44,6 +44,16 @@ if __name__ == '__main__':
 
     print(s)
 
+    pixels = []
+    for i in range(1, len(history)):
+        val = history[i]
+        pos = (i - 1) % 40
+        pixel = '#' if (pos >= val - 1 and pos <= val + 1) else '.'
+        pixels.append(pixel)
 
+    image = np.array(pixels).reshape((6, 40))
 
-
+    for i in range(6):
+        for j in range(40):
+            print(image[i, j], end='')
+        print()
