@@ -16,19 +16,24 @@ def range_length(rng):
     return b - a + 1
 
 
+def overlap_in_ranges(ranges):
+    first, second = sorted(ranges, key=lambda rng: rng[0])
+    return first[1] >= second[0]
+
+
 def full_overlap_in_ranges(ranges):
     smaller, larger = sorted(ranges, key=range_length)
     return larger[0] <= smaller[0] and larger[1] >= smaller[1]
 
 
-def count_full_overlaps(fname):
+def count_overlaps(fname, overlap_func):
 
     count = 0
 
     with open(fname) as f:
         for line in f:
             ranges = parse_line(line)
-            if full_overlap_in_ranges(ranges):
+            if overlap_func(ranges):
                 count += 1
     
     return count
@@ -36,6 +41,8 @@ def count_full_overlaps(fname):
 
 if __name__ == '__main__':
 
-    assert 2 == count_full_overlaps('data/test_input.txt')
+    assert 2 == count_overlaps('data/test_input.txt', full_overlap_in_ranges)
+    assert 4 == count_overlaps('data/test_input.txt', overlap_in_ranges)
 
-    print(f"Number of full overlaps: {count_full_overlaps('data/input.txt')}")
+    print(f"Number of full overlaps: {count_overlaps('data/input.txt', full_overlap_in_ranges)}")
+    print(f"Number of overlaps: {count_overlaps('data/input.txt', overlap_in_ranges)}")
